@@ -15,6 +15,12 @@ Blurs GTA 6 videos, posts and comments. Everything runs locally; nothing is sent
 - Hidden videos don't play, and neither does the hover preview.
 - Popup: on/off toggle, image recognition, image threshold, custom keywords and channel names (one per line, e.g. GTA YouTubers).
 
+## Sharing keyword lists
+
+- **Export:** in the popup, click **Copy all** next to the custom keywords. The whole list goes to the clipboard, one per line.
+- **Import:** paste a list into the keyword box; every line becomes a keyword and duplicates are skipped.
+- **Find one:** typing in the keyword box filters the list, so you can find a specific keyword and remove it with its ×.
+
 ## What it filters
 
 - **Text:** one strong match (GTA 6, GTA VI, #gta6, Grand Theft Auto VI, Jason Duval, Port Gellhorn…) or two different weak ones (GTA, Vice City, Jason, Lucia, Leonida, Rockstar…) within the same card. Alt text counts too (Instagram often describes the image there).

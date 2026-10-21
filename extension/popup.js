@@ -53,7 +53,9 @@ function renderStatus() {
 
 function renderChips(list) {
   const tpl = $('chipTpl').content.firstElementChild;
-  $('chips').replaceChildren(...list.map((k) => {
+  const q = $('kw').value.trim().toLowerCase(); // the add box doubles as search
+  const shown = q ? list.filter((k) => k.toLowerCase().includes(q)) : list;
+  $('chips').replaceChildren(...shown.map((k) => {
     const li = tpl.cloneNode(true);
     li.querySelector('span').textContent = k;
     li.title = k;
@@ -62,9 +64,12 @@ function renderChips(list) {
     del.onclick = () => save({ extra: list.filter((x) => x !== k).join('\n') });
     return li;
   }));
-  $('chipsEmpty').hidden = list.length > 0;
-  $('kwCount').textContent = list.length || '';
-  $('kwClear').hidden = list.length === 0;
+  $('chipsEmpty').hidden = shown.length > 0;
+  $('chipsEmpty').textContent = list.length
+    ? 'No match. Press Enter to add it.'
+    : 'No custom keywords yet. GTA YouTubers\' names are a good start.';
+  $('kwCount').textContent = q ? `${shown.length} / ${list.length}` : list.length || '';
+  $('kwClear').hidden = $('kwCopy').hidden = list.length === 0;
 }
 
 function addKeywords(text) {
@@ -73,8 +78,8 @@ function addKeywords(text) {
   for (const k of text.split(/[\r\n\t]+/).map((x) => x.trim()).filter(Boolean)) {
     if (!seen.has(k.toLowerCase())) { seen.add(k.toLowerCase()); list.push(k); }
   }
-  save({ extra: list.join('\n') });
   $('kw').value = '';
+  save({ extra: list.join('\n') });
 }
 
 async function refreshCount() {
@@ -100,7 +105,13 @@ segButtons.forEach((b, i) => {
     next.focus();
   };
 });
-$('kw').onkeydown = (e) => { if (e.key === 'Enter') addKeywords(e.target.value); };
+$('kw').oninput = () => renderChips(keywords());
+$('kwCopy').onclick = async (e) => {
+  await navigator.clipboard.writeText(keywords().join('\n'));
+  e.target.textContent = 'Copied';
+  setTimeout(() => { e.target.textContent = 'Copy all'; }, 1500);
+};
+$('kw').onkeydown =(e) => { if (e.key === 'Enter') addKeywords(e.target.value); };
 $('kw').onpaste = (e) => {
   const text = e.clipboardData.getData('text');
   if (!/[\r\n]/.test(text)) return; // single line: normal paste, Enter adds it

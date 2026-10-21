@@ -51,15 +51,16 @@
   <div class="kw-head">
     <label class="label" for="kw">Custom keywords</label>
     <span class="kw-count" id="kwCount"></span>
+    <button type="button" class="link" id="kwCopy" hidden>Copy all</button>
     <button type="button" class="link" id="kwClear" hidden>Clear all</button>
   </div>
   <div class="kw-input">
-    <input id="kw" placeholder="Channel, account or phrase" autocomplete="off" spellcheck="false">
+    <input id="kw" placeholder="Search or add a keyword" autocomplete="off" spellcheck="false">
     <button type="button" class="icon-btn" id="kwAdd" aria-label="Add">
       <svg viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
     </button>
   </div>
-  <p class="hint">Press Enter to add. You can also paste a whole list, one per line.</p>
+  <p class="hint">Typing filters the list, Enter adds it. You can also paste a whole list, one per line.</p>
   <ul class="chips" id="chips"></ul>
   <p class="chips-empty" id="chipsEmpty">No custom keywords yet. GTA YouTubers' names are a good start.</p>
 </section>
