@@ -1,36 +1,35 @@
-# GTA 6 spoiler-szűrő (Brave)
+# GTA 6 spoiler filter (Brave)
 
-Elhomályosítja a GTA 6-os videókat, posztokat és kommenteket. Minden a gépeden fut, semmit nem küld sehova.
+Blurs GTA 6 videos, posts and comments. Everything runs locally; nothing is sent anywhere.
 
-## Telepítés
+## Install
 
-1. Brave-ben nyisd meg: `brave://extensions`, és jobb fent kapcsold be a **Fejlesztői módot**.
-2. **Kicsomagolt bővítmény betöltése**, majd válaszd ki az `extension` mappát.
-3. A puzzle ikonnál tűzd ki, így a beállítások egy kattintásra elérhetők.
+1. Run `npm install`. It copies the runtime files into `extension/vendor`.
+2. In Brave, open `brave://extensions` and turn on **Developer mode** (top right).
+3. Click **Load unpacked** and select the `extension` folder.
+4. Pin it from the puzzle icon so the settings are one click away.
 
-Az `extension/vendor` mappa már benne van. Ha törölted, az `npm install` visszamásolja.
+## Usage
 
-## Használat
+- GTA content is greyed out and blurred. One click reveals it (without opening it). Navigating to a new page hides it again.
+- Hidden videos don't play, and neither does the hover preview.
+- Popup: on/off toggle, image recognition, image threshold, custom keywords and channel names (one per line, e.g. GTA YouTubers).
 
-- A GTA-tartalom szürke és elmosott. Egy kattintás felfedi (ilyenkor nem nyitja meg). Új oldalra lépve újra elrejti.
-- Az elrejtett videó nem indul el, a hover-előnézet sem.
-- Popup: ki/be kapcsolás, képfelismerés, kép-küszöb, saját kulcsszavak és csatornanevek (soronként egy, például GTA-s youtuberek nevei).
+## What it filters
 
-## Mit szűr
+- **Text:** one strong match (GTA 6, GTA VI, #gta6, Grand Theft Auto VI, Jason Duval, Port Gellhorn…) or two different weak ones (GTA, Vice City, Jason, Lucia, Leonida, Rockstar…) within the same card. Alt text counts too (Instagram often describes the image there).
+- **Images:** a local CLIP model plus a classifier trained on top of it. The first run downloads about 85 MB from Hugging Face; after that it runs from cache. Only images near the viewport and at least thumbnail-sized are checked.
+- Card-level rules: YouTube, Reddit, X, TikTok, Google, Facebook. On every other site it filters at the `article`/`li`/paragraph level.
 
-- **Szöveg:** egy erős találat (GTA 6, GTA VI, #gta6, Grand Theft Auto VI, Jason Duval, Port Gellhorn…) vagy két különböző gyenge (GTA, Vice City, Jason, Lucia, Leonida, Rockstar…) ugyanazon a kártyán belül. Benne vannak az alt szövegek is (az Instagram ezekbe gyakran beleírja, mi van a képen).
-- **Kép:** helyi CLIP modell és egy rá tanított osztályozó. Első használatkor kb. 85 MB-ot tölt le a Hugging Face-ről, utána a gyorsítótárból fut. Csak a képernyő közelében lévő, legalább thumbnail méretű képeket nézi.
-- Kártyaszintű szabályok: YouTube, Reddit, X, TikTok, Google, Facebook. Minden más oldalon `article`/`li`/bekezdés szinten szűr.
+## Development
 
-## Fejlesztés
+- `npm test`: self-check of the keyword rules.
+- `node tools/train-probe.mjs`: retrains `extension/probe.json` (YouTube thumbnails and Bing images, CLIP embeddings, logistic regression, CV report per threshold and per source).
+- Image recognizer log: `brave://extensions`, then on the extension click "Inspect views: offscreen.html".
 
-- `npm test`: kulcsszószabályok önellenőrzése.
-- `node tools/train-probe.mjs`: újratanítja az `extension/probe.json`-t (YouTube-thumbnailek és Bing-képek, CLIP-vektorok, logisztikus regresszió, CV-riport küszöbönként és forrásonként).
-- A képfelismerő naplója: `brave://extensions`, a bővítménynél „Nézetek vizsgálata: offscreen.html”.
+## Limitations
 
-## Korlátok
-
-- Instagram Reels oldalon csak a felirat mosódik el, maga a videó nem.
-- A Reddit, X, Instagram és Facebook kártyaszabályait nem tudtam élesben tesztelni (bot-védelem, illetve bejelentkezés kell). Ha valami átcsúszik, új szelektor kell a `content.js` `SITE` listájába.
-- Képfelismerés 0.5-ös küszöbnél: a GTA 6-os YouTube-thumbnailek kb. 66%-át, a többi GTA 6-os kép (poszter, artwork, hírkártya) kb. 82%-át fogja meg, a nem GTA-s képek kb. 4%-át jelöli. Főleg más open-world játékokat és Miami/Florida képeket néz GTA-nak.
-- A kicsi feliratot vagy logót nem látja (a modell 224×224 pixelre kicsinyít). Ha egy oldal saját sablonjában csak egy „GRAND THEFT AUTO VI” címke jelzi a témát (pl. Hungarian Rockstar Club), vedd fel az oldal nevét a popupban a csatornanevek közé. Ha egy témakör rendszeresen fennakad, tegyél hozzá pár ilyen keresést a `tools/train-probe.mjs` `neg` listájához, és tanítsd újra.
+- On Instagram Reels only the caption is blurred, not the video itself.
+- The Reddit, X, Instagram and Facebook card rules couldn't be tested live (bot protection or login required). If something slips through, add a selector to the `SITE` list in `content.js`.
+- Image recognition at a 0.5 threshold catches about 66% of GTA 6 YouTube thumbnails and about 82% of other GTA 6 images (posters, artwork, news cards), and flags about 4% of non-GTA images. False positives are mostly other open-world games and Miami/Florida photos.
+- It can't see small captions or logos (the model downscales to 224×224). If a site's own template only marks the topic with a "GRAND THEFT AUTO VI" label (e.g. Hungarian Rockstar Club), add the site's name to the channel names in the popup. If a topic keeps getting flagged, add a few such searches to the `neg` list in `tools/train-probe.mjs` and retrain.
