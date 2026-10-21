@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="hu">
+<meta charset="utf-8">
+<link rel="stylesheet" href="popup.css">
+<body>
+<!-- Icons: Phosphor (@phosphor-icons/core), inlined. -->
+<header class="head">
+  <img class="mark" src="icons/icon.svg" alt="">
+  <div class="title">
+    <h1>Spoilerszűrő</h1>
+    <p>GTA 6</p>
+  </div>
+  <label class="switch">
+    <input type="checkbox" id="enabled" role="switch" aria-label="Szűrés bekapcsolva">
+    <span></span>
+  </label>
+</header>
+
+<section class="status" id="status" aria-live="polite">
+  <div class="status-big" id="statusBig"></div>
+  <div class="status-icon" aria-hidden="true">
+    <svg viewBox="0 0 256 256" fill="currentColor"><path d="M96.68,57.87a4,4,0,0,1,2.08-6.6A130.13,130.13,0,0,1,128,48c34.88,0,66.57,13.26,91.66,38.35,18.83,18.83,27.3,37.62,27.65,38.41a8,8,0,0,1,0,6.5c-.35.79-8.82,19.57-27.65,38.4q-4.28,4.26-8.79,8.07a4,4,0,0,1-5.55-.36ZM213.92,210.62a8,8,0,1,1-11.84,10.76L180,197.13A127.21,127.21,0,0,1,128,208c-34.88,0-66.57-13.26-91.66-38.34C17.51,150.83,9,132.05,8.69,131.26a8,8,0,0,1,0-6.5C9,124,17.51,105.18,36.34,86.35a135,135,0,0,1,25-19.78L42.08,45.38A8,8,0,1,1,53.92,34.62Zm-65.49-48.25-52.69-58a40,40,0,0,0,52.69,58Z"/></svg>
+  </div>
+  <p class="status-sub" id="statusSub"></p>
+</section>
+
+<section class="group">
+  <div class="row">
+    <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM48,48H208v77.38l-24.69-24.7a16,16,0,0,0-22.62,0L53.37,208H48ZM208,208H76l96-96,36,36v60ZM96,120A24,24,0,1,0,72,96,24,24,0,0,0,96,120Zm0-32a8,8,0,1,1-8,8A8,8,0,0,1,96,88Z"/></svg>
+    <div class="row-text">
+      <label class="label" for="images">Képfelismerés</label>
+      <p class="hint">Szöveg nélküli thumbnaileket is letakar. Helyben fut, első bekapcsoláskor kb.&nbsp;85&nbsp;MB letöltés.</p>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="images" role="switch">
+      <span></span>
+    </label>
+  </div>
+  <div class="sens" id="sens">
+    <span class="label" id="sensLabel">Érzékenység</span>
+    <div class="seg" id="seg" role="radiogroup" aria-labelledby="sensLabel">
+      <button type="button" role="radio" data-th="0.7">Laza</button>
+      <button type="button" role="radio" data-th="0.5">Normál</button>
+      <button type="button" role="radio" data-th="0.3">Szigorú</button>
+    </div>
+    <p class="hint" id="sensHint"></p>
+  </div>
+</section>
+
+<section class="group">
+  <div class="kw-head">
+    <label class="label" for="kw">Saját kulcsszavak</label>
+    <span class="kw-count" id="kwCount"></span>
+    <button type="button" class="link" id="kwClear" hidden>Mind törlése</button>
+  </div>
+  <div class="kw-input">
+    <input id="kw" placeholder="Csatorna, fiók vagy kifejezés" autocomplete="off" spellcheck="false">
+    <button type="button" class="icon-btn" id="kwAdd" aria-label="Hozzáadás">
+      <svg viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
+    </button>
+  </div>
+  <p class="hint">Enterrel adod hozzá. Egész listát is beilleszthetsz, soronként egyet.</p>
+  <ul class="chips" id="chips"></ul>
+  <p class="chips-empty" id="chipsEmpty">Még nincs saját kulcsszó. Ide jöhetnek például GTA-s youtuberek nevei.</p>
+</section>
+
+<footer>
+  <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Z"/></svg>
+  Minden a gépeden fut, semmit nem küld el.
+</footer>
+
+<template id="chipTpl">
+  <li><span></span><button type="button"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></button></li>
+</template>
+
+<script src="common.js"></script>
+<script src="popup.js"></script>

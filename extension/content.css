@@ -1,0 +1,12 @@
+[data-gta6f] {
+  filter: blur(18px) grayscale(1) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+}
+/* Text only: 18px wipes small text out completely (looks like an empty box), a font-relative blur still reads as hidden text. */
+[data-gta6f]:not(:has(img, video, canvas)) {
+  filter: blur(0.4em) grayscale(1) !important;
+}
+[data-gta6f] * {
+  pointer-events: none !important;
+}
