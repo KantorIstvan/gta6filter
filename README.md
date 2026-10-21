@@ -1,25 +1,60 @@
-# GTA 6 spoiler filter (Brave)
+<div align="center">
 
-Blurs GTA 6 videos, posts and comments. Everything runs locally; nothing is sent anywhere.
+<img src="extension/icons/icon.svg" width="96" alt="">
+
+# GTA 6 Spoiler Filter
+
+**Browse the internet without GTA 6 spoilers.** A Brave / Chrome extension that blurs GTA 6 videos, posts, thumbnails and comments before you see them.
+
+![Manifest V3](https://img.shields.io/badge/Manifest-V3-b8327f?style=flat-square) ![Brave | Chrome](https://img.shields.io/badge/Brave%20%7C%20Chrome-supported-b8327f?style=flat-square) ![Runs locally](https://img.shields.io/badge/runs-100%25%20locally-b8327f?style=flat-square) ![Transformers.js](https://img.shields.io/badge/vision-CLIP%20via%20Transformers.js-b8327f?style=flat-square)
+
+</div>
+
+<br>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/popup-dark.png">
+  <img src="docs/popup-light.png" align="right" width="300" alt="The extension popup: 14 items hidden on this page, image recognition on, custom keyword list">
+</picture>
+
+### What it does
+
+**Reads the page.** One strong match like *GTA 6*, *Jason Duval* or *Port Gellhorn* hides the card. Weak words like *Vice City* or *Lucia* need a second one next to them, so old GTA content stays visible.
+
+**Looks at the pictures.** A local CLIP model catches thumbnails that have no text at all.
+
+**Stays out of the way.** Hidden items are greyed out and blurred. One click reveals a card without opening it. Hidden videos don't autoplay, and neither do hover previews.
+
+**Learns your feed.** Add channel names, accounts or phrases. Paste a whole list at once, search it, export it.
+
+**Keeps it private.** No server, no analytics, no account. The only download is the model, once.
+
+<br clear="right">
 
 ## Install
 
-1. Run `npm install`. It copies the runtime files into `extension/vendor`.
-2. In Brave, open `brave://extensions` and turn on **Developer mode** (top right).
-3. Click **Load unpacked** and select the `extension` folder.
-4. Pin it from the puzzle icon so the settings are one click away.
+```bash
+git clone https://github.com/KantorIstvan/gta6filter.git
+cd gta6filter
+npm install        # copies the runtime into extension/vendor
+```
 
-## Usage
+1. Open `brave://extensions` (or `chrome://extensions`) and turn on **Developer mode**.
+2. Click **Load unpacked** and pick the `extension` folder.
+3. Pin it from the puzzle icon so the popup is one click away.
 
-- GTA content is greyed out and blurred. One click reveals it (without opening it). Navigating to a new page hides it again.
-- Hidden videos don't play, and neither does the hover preview.
-- Popup: on/off toggle, image recognition, image threshold, custom keywords and channel names (one per line, e.g. GTA YouTubers).
+## How it decides
 
-## Sharing keyword lists
+| Signal | How it works |
+|---|---|
+| **Text** | One strong hit (`GTA 6`, `GTA VI`, `#gta6`, `Grand Theft Auto VI`, `Jason Duval`, `Port Gellhorn`…) or two different weak ones (`GTA`, `Vice City`, `Jason`, `Lucia`, `Leonida`, `Rockstar`…) in the same card. Alt text counts too, Instagram often describes the image there. |
+| **Images** | CLIP embeddings plus a small classifier trained on top. About 85 MB from Hugging Face on first use, cached after that. Only thumbnail-sized images near the viewport are checked. |
+| **Sites** | Card-level rules for YouTube, Reddit, X, TikTok, Google and Facebook. Everywhere else it hides at `article` / `li` / paragraph level. |
+| **Your keywords** | Case-insensitive substring match, each one counts as a strong hit. |
 
-- **Export:** in the popup, click **Copy all** next to the custom keywords. The whole list goes to the clipboard, one per line.
-- **Import:** paste a list into the keyword box; every line becomes a keyword and duplicates are skipped.
-- **Find one:** typing in the keyword box filters the list, so you can find a specific keyword and remove it with its ×.
+## Keyword lists
+
+Your list lives in the popup. **Copy all** puts it on the clipboard, one keyword per line. Pasting a multi-line list into the keyword box adds every line and skips duplicates. Typing filters the list, so you can find one keyword and remove it with its ×.
 
 <details>
 <summary>My keyword list (copy and paste it into the popup)</summary>
@@ -1070,21 +1105,24 @@ Lamar Davis
 
 </details>
 
-## What it filters
+## Accuracy
 
-- **Text:** one strong match (GTA 6, GTA VI, #gta6, Grand Theft Auto VI, Jason Duval, Port Gellhorn…) or two different weak ones (GTA, Vice City, Jason, Lucia, Leonida, Rockstar…) within the same card. Alt text counts too (Instagram often describes the image there).
-- **Images:** a local CLIP model plus a classifier trained on top of it. The first run downloads about 85 MB from Hugging Face; after that it runs from cache. Only images near the viewport and at least thumbnail-sized are checked.
-- Card-level rules: YouTube, Reddit, X, TikTok, Google, Facebook. On every other site it filters at the `article`/`li`/paragraph level.
+> [!NOTE]
+> At the default threshold (0.5), image recognition catches about **66%** of GTA 6 YouTube thumbnails and about **82%** of other GTA 6 images (posters, artwork, news cards), while flagging about **4%** of non-GTA images. False positives are mostly other open-world games and Miami / Florida photos. Text rules catch what the model misses.
+
+> [!WARNING]
+> **Known gaps**
+> - On Instagram Reels only the caption is blurred, not the video.
+> - The Reddit, X, Instagram and Facebook rules weren't tested live (bot protection or login). If something slips through, add a selector to the `SITE` list in `content.js`.
+> - The model downscales to 224×224, so it can't read small captions or logos. If a site marks the topic only with a "GRAND THEFT AUTO VI" label in its own template (e.g. Hungarian Rockstar Club), add the site's name to your keywords.
 
 ## Development
 
-- `npm test`: self-check of the keyword rules.
-- `node tools/train-probe.mjs`: retrains `extension/probe.json` (YouTube thumbnails and Bing images, CLIP embeddings, logistic regression, CV report per threshold and per source).
-- Image recognizer log: `brave://extensions`, then on the extension click "Inspect views: offscreen.html".
+```bash
+npm test                      # self-check of the keyword rules
+node tools/train-probe.mjs    # retrain extension/probe.json
+```
 
-## Limitations
+`train-probe.mjs` pulls YouTube thumbnails and Bing images, embeds them with CLIP, fits a logistic regression and prints a cross-validation report per threshold and per source. If a topic keeps getting flagged, add a few such searches to its `neg` list and retrain.
 
-- On Instagram Reels only the caption is blurred, not the video itself.
-- The Reddit, X, Instagram and Facebook card rules couldn't be tested live (bot protection or login required). If something slips through, add a selector to the `SITE` list in `content.js`.
-- Image recognition at a 0.5 threshold catches about 66% of GTA 6 YouTube thumbnails and about 82% of other GTA 6 images (posters, artwork, news cards), and flags about 4% of non-GTA images. False positives are mostly other open-world games and Miami/Florida photos.
-- It can't see small captions or logos (the model downscales to 224×224). If a site's own template only marks the topic with a "GRAND THEFT AUTO VI" label (e.g. Hungarian Rockstar Club), add the site's name to the channel names in the popup. If a topic keeps getting flagged, add a few such searches to the `neg` list in `tools/train-probe.mjs` and retrain.
+The image recognizer logs to `brave://extensions`, then **Inspect views: offscreen.html** on the extension.
