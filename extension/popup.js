@@ -2,9 +2,9 @@ const $ = (id) => document.getElementById(id);
 
 // Cross-validated on ~1270 YouTube thumbnails (tools/train-probe.mjs).
 const SENS = {
-  0.7: 'Ritkán téved (kb. 2%), de a GTA 6-os képek felét átengedi.',
-  0.5: 'A GTA 6-os képek kb. 70%-át elkapja, más képeknél kb. 6% a téves takarás.',
-  0.3: 'A GTA 6-os képek kb. 87%-át elkapja, de minden hetedik más képet is letakar.',
+  0.7: 'Rarely wrong (about 2%), but lets half of GTA 6 images through.',
+  0.5: 'Catches about 70% of GTA 6 images; about 6% of other images get covered by mistake.',
+  0.3: 'Catches about 87% of GTA 6 images, but also covers one in seven other images.',
 };
 const segButtons = [...$('seg').children];
 let s = DEFAULTS;
@@ -38,16 +38,16 @@ function renderStatus() {
   const st = $('status');
   if (!s.enabled) {
     st.dataset.state = 'off';
-    $('statusBig').textContent = 'Szünetel';
-    $('statusSub').textContent = 'Kapcsold be fent, és újra elrejti a GTA-tartalmat.';
+    $('statusBig').textContent = 'Paused';
+    $('statusSub').textContent = 'Turn it on above to hide GTA content again.';
   } else if (count === null) {
     st.dataset.state = 'na';
-    $('statusBig').textContent = 'Itt nem fut';
-    $('statusSub').textContent = 'Böngészőoldalon nem működik. Ha ez rendes weboldal, frissítsd (F5).';
+    $('statusBig').textContent = 'Not running here';
+    $('statusSub').textContent = 'It does not work on browser pages. If this is a normal website, reload it (F5).';
   } else {
     st.dataset.state = 'on';
     $('statusBig').textContent = count;
-    $('statusSub').textContent = count ? 'elem elrejtve ezen az oldalon' : 'Ezen az oldalon nincs GTA-tartalom.';
+    $('statusSub').textContent = count ? count === 1 ? 'item hidden on this page' : 'items hidden on this page' : 'No GTA content on this page.';
   }
 }
 
@@ -58,7 +58,7 @@ function renderChips(list) {
     li.querySelector('span').textContent = k;
     li.title = k;
     const del = li.querySelector('button');
-    del.setAttribute('aria-label', `${k} törlése`);
+    del.setAttribute('aria-label', `Remove ${k}`);
     del.onclick = () => save({ extra: list.filter((x) => x !== k).join('\n') });
     return li;
   }));
@@ -114,13 +114,13 @@ $('kwClear').onclick = (e) => { // two-step, it can wipe a long pasted list
   clearTimeout(clearTimer);
   if (e.target.dataset.armed) {
     delete e.target.dataset.armed;
-    e.target.textContent = 'Mind törlése';
+    e.target.textContent = 'Clear all';
     save({ extra: '' });
     return;
   }
   e.target.dataset.armed = '1';
-  e.target.textContent = 'Biztos? Kattints újra';
-  clearTimer = setTimeout(() => { delete e.target.dataset.armed; e.target.textContent = 'Mind törlése'; }, 3000);
+  e.target.textContent = 'Sure? Click again';
+  clearTimer = setTimeout(() => { delete e.target.dataset.armed; e.target.textContent = 'Clear all'; }, 3000);
 };
 
 chrome.storage.local.get(DEFAULTS).then((stored) => {

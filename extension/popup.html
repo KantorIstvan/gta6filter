@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="hu">
+<html lang="en">
 <meta charset="utf-8">
 <link rel="stylesheet" href="popup.css">
 <body>
@@ -7,11 +7,11 @@
 <header class="head">
   <img class="mark" src="icons/icon.svg" alt="">
   <div class="title">
-    <h1>Spoilerszűrő</h1>
+    <h1>Spoiler filter</h1>
     <p>GTA 6</p>
   </div>
   <label class="switch">
-    <input type="checkbox" id="enabled" role="switch" aria-label="Szűrés bekapcsolva">
+    <input type="checkbox" id="enabled" role="switch" aria-label="Filtering enabled">
     <span></span>
   </label>
 </header>
@@ -28,8 +28,8 @@
   <div class="row">
     <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM48,48H208v77.38l-24.69-24.7a16,16,0,0,0-22.62,0L53.37,208H48ZM208,208H76l96-96,36,36v60ZM96,120A24,24,0,1,0,72,96,24,24,0,0,0,96,120Zm0-32a8,8,0,1,1-8,8A8,8,0,0,1,96,88Z"/></svg>
     <div class="row-text">
-      <label class="label" for="images">Képfelismerés</label>
-      <p class="hint">Szöveg nélküli thumbnaileket is letakar. Helyben fut, első bekapcsoláskor kb.&nbsp;85&nbsp;MB letöltés.</p>
+      <label class="label" for="images">Image recognition</label>
+      <p class="hint">Also covers thumbnails without text. Runs locally; about&nbsp;85&nbsp;MB download on first use.</p>
     </div>
     <label class="switch">
       <input type="checkbox" id="images" role="switch">
@@ -37,11 +37,11 @@
     </label>
   </div>
   <div class="sens" id="sens">
-    <span class="label" id="sensLabel">Érzékenység</span>
+    <span class="label" id="sensLabel">Sensitivity</span>
     <div class="seg" id="seg" role="radiogroup" aria-labelledby="sensLabel">
-      <button type="button" role="radio" data-th="0.7">Laza</button>
-      <button type="button" role="radio" data-th="0.5">Normál</button>
-      <button type="button" role="radio" data-th="0.3">Szigorú</button>
+      <button type="button" role="radio" data-th="0.7">Relaxed</button>
+      <button type="button" role="radio" data-th="0.5">Normal</button>
+      <button type="button" role="radio" data-th="0.3">Strict</button>
     </div>
     <p class="hint" id="sensHint"></p>
   </div>
@@ -49,24 +49,24 @@
 
 <section class="group">
   <div class="kw-head">
-    <label class="label" for="kw">Saját kulcsszavak</label>
+    <label class="label" for="kw">Custom keywords</label>
     <span class="kw-count" id="kwCount"></span>
-    <button type="button" class="link" id="kwClear" hidden>Mind törlése</button>
+    <button type="button" class="link" id="kwClear" hidden>Clear all</button>
   </div>
   <div class="kw-input">
-    <input id="kw" placeholder="Csatorna, fiók vagy kifejezés" autocomplete="off" spellcheck="false">
-    <button type="button" class="icon-btn" id="kwAdd" aria-label="Hozzáadás">
+    <input id="kw" placeholder="Channel, account or phrase" autocomplete="off" spellcheck="false">
+    <button type="button" class="icon-btn" id="kwAdd" aria-label="Add">
       <svg viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
     </button>
   </div>
-  <p class="hint">Enterrel adod hozzá. Egész listát is beilleszthetsz, soronként egyet.</p>
+  <p class="hint">Press Enter to add. You can also paste a whole list, one per line.</p>
   <ul class="chips" id="chips"></ul>
-  <p class="chips-empty" id="chipsEmpty">Még nincs saját kulcsszó. Ide jöhetnek például GTA-s youtuberek nevei.</p>
+  <p class="chips-empty" id="chipsEmpty">No custom keywords yet. GTA YouTubers' names are a good start.</p>
 </section>
 
 <footer>
   <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Z"/></svg>
-  Minden a gépeden fut, semmit nem küld el.
+  Everything runs on your device. Nothing is sent anywhere.
 </footer>
 
 <template id="chipTpl">

@@ -1,15 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "GTA 6 spoiler-szűrő",
+  "name": "GTA 6 Spoiler Filter",
   "version": "1.0.0",
-  "description": "Elhomályosítja a GTA 6-os posztokat, videókat és kommenteket. Minden helyben fut.",
+  "description": "Blurs GTA 6 posts, videos and comments. Everything runs locally.",
   "permissions": ["storage", "offscreen"],
   "host_permissions": ["<all_urls>"],
   "background": { "service_worker": "background.js" },
   "icons": { "16": "icons/16.png", "32": "icons/32.png", "48": "icons/48.png", "128": "icons/128.png" },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "GTA 6 spoiler-szűrő",
+    "default_title": "GTA 6 Spoiler Filter",
     "default_icon": { "16": "icons/16.png", "32": "icons/32.png" }
   },
   "content_scripts": [{
