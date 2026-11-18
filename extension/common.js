@@ -6,7 +6,7 @@ const DEFAULTS = { enabled: true, images: true, threshold: 0.5, extra: '' };
 const STRONG = [
   /\bgta[\s_.-]*(?:6(?!\d)|vi(?![a-z]))/i, // gta 6, gta6, #gta6trailer, gta vi, GTA VI-ban; not gta 60 / gta vice city
   /\bgrand\s*theft\s*auto[\s:._-]*(?:6(?!\d)|vi(?![a-z]))/i,
-  /\b(?:jason\s+duval|lucia\s+caminos|cal\s+hampton|boobie\s+ike|dre'?quan\s+priest|raul\s+bautista|brian\s+heder|real\s+dimez|port\s+gellhorn|grassrivers|leonida\s+keys|mount\s+kalaga)\b/i,
+  /\b(?:jason\s+duval|lucia\s+caminos|cal\s+hampton|boobie\s+ike|dre'?quan\s+priest|raul\s+bautista|brian\s+heder|real\s+dimez|bae-luxe|dwnply|only\s+raw\s+records|lori\s+heder|port\s+gellhorn|grassrivers|leonida\s+keys|mount\s+kalaga)\b/i,
 ];
 // Weak terms are common words on their own ("Jason", old Vice City content), so two different ones are needed.
 const WEAK = ['gta|grand theft auto', 'vice city', 'leonida', 'lucia', 'jason', 'duval', 'rockstar', 'ambrosia']
